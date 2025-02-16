@@ -22,6 +22,7 @@ public class BaseDbContext: MultiTenantIdentityDbContext<
     protected BaseDbContext(IMultiTenantContextAccessor<ABCSchoolTenantInfo> multiTenantContextAccessor,
         DbContextOptions options) : base(multiTenantContextAccessor, options)
     {
+        TenantInfo = multiTenantContextAccessor.MultiTenantContext.TenantInfo;
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -34,5 +35,11 @@ public class BaseDbContext: MultiTenantIdentityDbContext<
                 options.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
             });
         }
+    }
+
+    override protected void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

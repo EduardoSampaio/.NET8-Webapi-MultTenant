@@ -1,4 +1,5 @@
 ﻿using Finbuckle.MultiTenant;
+using Infraestructure.Contexts;
 using Infraestructure.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,11 @@ public static class DependencyInjection
          .WithHeaderStrategy(TenancyConstants.TenantIdName)
          .WithClaimStrategy(TenancyConstants.TenantIdName)
          .WithEFCoreStore<TenantDbContext, ABCSchoolTenantInfo>();
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        });
 
         return services;
     }
