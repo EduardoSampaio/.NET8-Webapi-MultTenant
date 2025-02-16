@@ -9,7 +9,5 @@ public class TenantDbContext(DbContextOptions<TenantDbContext> options): EFCoreS
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<ABCSchoolTenantInfo>().ToTable("Tenants", "Multitenancy");
-
-
     }
 }
