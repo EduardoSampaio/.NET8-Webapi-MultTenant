@@ -1,7 +1,9 @@
 ﻿using Finbuckle.MultiTenant;
 using Infraestructure.Contexts;
+using Infraestructure.Identity.Models;
 using Infraestructure.Tenancy;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,35 @@ public static class DependencyInjection
         {
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         });
+
+        services.AddTransient<ITenantDbSeeder, TenantDbSeeder>();
+        services.AddTransient<ApplicationDbSeeder>();
+        services.AddIdentityService(configuration);
+
+        return services;
+    }
+
+    public static async Task AddDatabaseInitializeAsync(this IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+    {
+        using var scope = serviceProvider.CreateScope();
+        await scope.ServiceProvider
+                   .GetRequiredService<ITenantDbSeeder>()
+                   .InitializeDatabaseAsync(cancellationToken);
+    }
+
+    internal static IServiceCollection AddIdentityService(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+        {
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequiredLength = 8;
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
 
         return services;
     }

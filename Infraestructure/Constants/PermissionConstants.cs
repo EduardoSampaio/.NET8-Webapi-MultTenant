@@ -32,7 +32,7 @@ namespace Infraestructure.Constants
         }
     }
 
-    public static class SchoolPermissions
+    public class SchoolPermissions
     {
         private static readonly SchoolPermission[] _AllPermissions =
         {
