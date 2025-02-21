@@ -1,4 +1,4 @@
-# 🚀 Nome do Projeto
+# 🚀 ABC School
 
 Uma aplicação desenvolvida em **.NET 8** com arquitetura robusta e escalável, seguindo os princípios da **Clean Architecture**. O projeto utiliza **Entity Framework Core** para persistência de dados, **MediatR** para mediadores de comandos e eventos, autenticação via **JWT Tokens** e suporte a **Multi-Tenant**.
 
