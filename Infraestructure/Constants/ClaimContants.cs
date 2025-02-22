@@ -3,6 +3,6 @@
     public static class ClaimContants
     {
         public const string Tenant = "tenant";
-        public const string Permisson = "permisson";
+        public const string Permission = "permission";
     }
 }

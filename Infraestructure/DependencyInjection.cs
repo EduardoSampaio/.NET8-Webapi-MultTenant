@@ -1,7 +1,9 @@
 ﻿using Finbuckle.MultiTenant;
 using Infraestructure.Contexts;
+using Infraestructure.Identity.Auth;
 using Infraestructure.Identity.Models;
 using Infraestructure.Tenancy;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +31,7 @@ public static class DependencyInjection
         services.AddTransient<ITenantDbSeeder, TenantDbSeeder>();
         services.AddTransient<ApplicationDbSeeder>();
         services.AddIdentityService(configuration);
+        services.AddPermissions();
 
         return services;
     }
@@ -62,5 +65,12 @@ public static class DependencyInjection
     {
         app.UseMultiTenant();
         return app;
+    }
+
+    internal static IServiceCollection AddPermissions(this IServiceCollection services)
+    {
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        return services;
     }
 }

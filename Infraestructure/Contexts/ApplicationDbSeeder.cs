@@ -80,12 +80,12 @@ public class ApplicationDbSeeder
 
         foreach (var rolePermission in rolePermissions)
         {
-            if (!currentClaims.Any(c => c.Type == ClaimContants.Permisson && c.Value == rolePermission.Name))
+            if (!currentClaims.Any(c => c.Type == ClaimContants.Permission && c.Value == rolePermission.Name))
             {
                 await _applicationDbContext.RoleClaims.AddAsync(new ApplicationRoleClaim
                 {
                     RoleId = applicationRole.Id,
-                    ClaimType = ClaimContants.Permisson,
+                    ClaimType = ClaimContants.Permission,
                     ClaimValue = rolePermission.Name,
                     Description = rolePermission.Description,
                     Group = rolePermission.Group

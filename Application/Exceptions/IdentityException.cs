@@ -14,3 +14,4 @@ namespace Application.Exceptions
         public HttpStatusCode StatusCode { get; set; }
 
     }
+}
