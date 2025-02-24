@@ -1,9 +1,11 @@
 ﻿using Application.Exceptions;
 using Finbuckle.MultiTenant.Abstractions;
 using Infraestructure.Constants;
+using Infraestructure.Identity;
 using Infraestructure.Identity.Models;
 using Infraestructure.Tenancy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,13 +20,16 @@ namespace Application.Features.Identity.Tokens
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IMultiTenantContextAccessor<ABCSchoolTenantInfo> _tenantContextAccessor;
+        private readonly JwtSettings _jwtSettings;
 
         public TokenService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, 
-            IMultiTenantContextAccessor<ABCSchoolTenantInfo> tenantContextAccessor)
+            IMultiTenantContextAccessor<ABCSchoolTenantInfo> tenantContextAccessor,
+            IOptions<JwtSettings> jwtSettings)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _tenantContextAccessor = tenantContextAccessor;
+            _jwtSettings = jwtSettings.Value;
         }
 
         public async Task<TokenResponse> LoginAsync(TokenRequest request)
@@ -61,9 +66,43 @@ namespace Application.Features.Identity.Tokens
 
         }
 
-        public Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
+        public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
         {
-            throw new NotImplementedException();
+            var principal = GetClaimsPrincipalFromExpiringToken(request.CurrentJwt);
+            var userEmail = principal.GetEmail();
+
+            var userInDb = await _userManager.FindByEmailAsync(userEmail)
+                ?? throw new UnauthorizedException(["Authentication failed."]);
+
+            if (userInDb.RefreshToken != request.CurrentRefreshToken || userInDb.RefreshTokenExpiryTime < DateTime.UtcNow)
+            {
+                throw new UnauthorizedException(["Invalid token provide. Failed to generate new token."]);
+            }
+
+            return await GenerateTokenAndUpdateUserAsync(userInDb);
+        }
+
+        private ClaimsPrincipal GetClaimsPrincipalFromExpiringToken(string expiringToken)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero,
+                RoleClaimType = ClaimTypes.Role,
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret))
+
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(expiringToken, tokenValidationParameters, out var securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new UnauthorizedException(["Invalid token provide. Failed to generate new token."]);
+            }
+            return principal;
         }
 
         public async Task<TokenResponse> GenerateTokenAndUpdateUserAsync(ApplicationUser user)
@@ -71,7 +110,7 @@ namespace Application.Features.Identity.Tokens
             var newjwt = await GenerateToken(user);
 
             user.RefreshToken = GenerateRefreshToken();
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenTimeInDays);
 
             await _userManager.UpdateAsync(user);
 
@@ -94,7 +133,7 @@ namespace Application.Features.Identity.Tokens
         {
             var token = new JwtSecurityToken(
                  claims: claims,
-                 expires: DateTime.UtcNow.AddMinutes(60),
+                 expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpiryTimeInMinutes),
                  signingCredentials: signingCredentials
              );
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -102,7 +141,7 @@ namespace Application.Features.Identity.Tokens
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = Encoding.UTF8.GetBytes("MySuperSecret");
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
