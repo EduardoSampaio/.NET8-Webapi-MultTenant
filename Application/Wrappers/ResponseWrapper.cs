@@ -151,6 +151,15 @@ public class ResponseWrapper<T> : ResponseWrapper, IResponseWrapper<T>
         };
     }
 
+    public static IResponseWrapper<T> Success(T data)
+    {
+        return new ResponseWrapper<T>
+        {
+            ISuccessful = true,
+            Data = data
+        };
+    }
+
     public static IResponseWrapper<T> Success(T data, string message)
     {
         return new ResponseWrapper<T>
@@ -174,6 +183,11 @@ public class ResponseWrapper<T> : ResponseWrapper, IResponseWrapper<T>
     public new static Task<IResponseWrapper<T>> SuccessAsync()
     {
         return Task.FromResult(Success());
+    }
+
+    public static Task<IResponseWrapper<T>> SuccessAsync(T data)
+    {
+        return Task.FromResult(Success(data));
     }
 
     public static Task<IResponseWrapper<T>> SuccessAsync(T data, string message)

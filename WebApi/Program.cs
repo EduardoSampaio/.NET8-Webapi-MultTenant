@@ -11,12 +11,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
         builder.Services.AddControllers();
+
         builder.Services.AddInfrastructure(builder.Configuration);
+
         var jwtSettings = builder.Services.GetJwtSettings(builder.Configuration);
+
         builder.Services.AddJwtAuthentication(jwtSettings);
+
         builder.Services.AddApplicationService();
 
         var app = builder.Build();
