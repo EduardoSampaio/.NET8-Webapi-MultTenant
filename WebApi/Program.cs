@@ -1,5 +1,6 @@
 
 using Infraestructure;
+using Application;
 using System.Threading.Tasks;
 
 namespace WebApi;
@@ -13,26 +14,16 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
         builder.Services.AddInfrastructure(builder.Configuration);
         var jwtSettings = builder.Services.GetJwtSettings(builder.Configuration);
         builder.Services.AddJwtAuthentication(jwtSettings);
+        builder.Services.AddApplicationService();
 
         var app = builder.Build();
 
         await app.Services.AddDatabaseInitializeAsync();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
         app.UseHttpsRedirection();
-
-        app.UseAuthorization();
 
         app.UseInfrastructure();
 
