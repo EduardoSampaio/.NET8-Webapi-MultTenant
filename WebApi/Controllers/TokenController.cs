@@ -28,7 +28,7 @@ namespace WebApi.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost("login")]
+        [HttpPost("refresh-token")]
         [TenantHeader]
         [OpenApiOperation("Used to generate jwt from refresh token.")]
         [ShouldHavePermission(action: SchoolAction.RefreshToken, feature: SchoolFeature.Tokens)]

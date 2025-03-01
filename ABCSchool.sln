@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F5A84CB5-DEAE-47BA-ADA0-0E98754D3590}"
 EndProject
@@ -14,6 +14,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infraestructure", "Infraestructure\Infraestructure.csproj", "{B4D68EAB-A13B-4574-AE22-ED8C7A7F419E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{23B67FD4-B997-47B2-8A60-4EFB5688AEB5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,5 +52,8 @@ Global
 		{F1862931-306B-4627-9527-828109602E44} = {51423982-FF45-45F3-BDB3-639F64B94745}
 		{B4D68EAB-A13B-4574-AE22-ED8C7A7F419E} = {F5A84CB5-DEAE-47BA-ADA0-0E98754D3590}
 		{23B67FD4-B997-47B2-8A60-4EFB5688AEB5} = {F5A84CB5-DEAE-47BA-ADA0-0E98754D3590}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69AF622E-5311-4DF7-A1C6-D68345D4A27B}
 	EndGlobalSection
 EndGlobal

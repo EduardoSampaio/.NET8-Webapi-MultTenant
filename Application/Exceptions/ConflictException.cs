@@ -6,11 +6,11 @@ namespace Application.Exceptions
     {
         public ConflictException(List<string> errorMEssages = default, HttpStatusCode statusCode = HttpStatusCode.Conflict)
         {
-            ErrorMEssages = errorMEssages;
+            ErrorMessages = errorMEssages;
             StatusCode = statusCode;
         }
 
-        public List<string> ErrorMEssages { get; set; }
+        public List<string> ErrorMessages { get; set; }
         public HttpStatusCode StatusCode { get; set; }
     }
 }

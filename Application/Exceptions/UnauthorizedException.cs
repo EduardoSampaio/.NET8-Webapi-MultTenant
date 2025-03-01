@@ -12,10 +12,10 @@ namespace Application.Exceptions
         public UnauthorizedException(List<string> errorMEssages = default, HttpStatusCode statusCode = HttpStatusCode.Unauthorized)
         {
             ErrorMessages = errorMEssages;
-            StatusCOde = statusCode;
+            StatusCode = statusCode;
         }
 
         public List<string> ErrorMessages { get; set; }
-        public HttpStatusCode  StatusCOde { get; set; }
+        public HttpStatusCode  StatusCode { get; set; }
     }
 }

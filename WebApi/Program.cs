@@ -1,7 +1,7 @@
 
-using Infraestructure;
 using Application;
-using System.Threading.Tasks;
+using Infraestructure;
+using WebApi.Middleware;
 
 namespace WebApi;
 
@@ -30,6 +30,8 @@ public class Program
         app.UseInfrastructure();
 
         app.MapControllers();
+
+        app.UseMiddleware<ErrorHandlingMiddleware>();
 
         app.Run();
     }

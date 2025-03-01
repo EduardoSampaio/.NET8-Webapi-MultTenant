@@ -33,6 +33,11 @@ namespace Infraestructure.OpenApi
                     return true;
                 }
 
+                if(context.OperationDescription.Operation.Security is null)
+                {
+                    return true;
+                }
+
                 if(context.OperationDescription.Operation.Security.Count == 0)
                 {
                     (context.OperationDescription.Operation.Security ??= [])

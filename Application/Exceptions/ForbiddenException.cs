@@ -2,7 +2,7 @@
 
 namespace Application.Exceptions
 {
-    public class  ForbiddenException
+    public class  ForbiddenException: Exception
     {
         public ForbiddenException(List<string> errorMEssages = default, HttpStatusCode statusCode = HttpStatusCode.Forbidden)
         {

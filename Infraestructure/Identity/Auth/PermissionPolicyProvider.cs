@@ -13,16 +13,16 @@ public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options) : 
         return FallbackPolicyProvider.GetDefaultPolicyAsync();
     }
 
-    public Task<AuthorizationPolicy?> GetFallbackPolicyAsync() 
+    public Task<AuthorizationPolicy> GetFallbackPolicyAsync() 
     {
         return Task.FromResult<AuthorizationPolicy?>(null);
     }
 
-    public Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
+    public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
     {
         if (policyName.StartsWith(ClaimContants.Permission, StringComparison.OrdinalIgnoreCase))
         {
-            var permission = policyName.Substring("Permission".Length);
+            var permission = policyName["Permission".Length..];
             var policy = new AuthorizationPolicyBuilder();
             policy.AddRequirements(new PermissionRequirement(permission));
             return Task.FromResult(policy?.Build());

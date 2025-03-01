@@ -17,7 +17,7 @@ public class BaseDbContext: MultiTenantIdentityDbContext<
     ApplicationRoleClaim,
     IdentityUserToken<string>>
 {
-    private new ABCSchoolTenantInfo? TenantInfo {get; set; }
+    private new ABCSchoolTenantInfo TenantInfo {get; set; }
 
     protected BaseDbContext(IMultiTenantContextAccessor<ABCSchoolTenantInfo> multiTenantContextAccessor,
         DbContextOptions options) : base(multiTenantContextAccessor, options)
