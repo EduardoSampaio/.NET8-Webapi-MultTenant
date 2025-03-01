@@ -20,7 +20,6 @@ using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 
@@ -105,6 +104,17 @@ public static class DependencyInjection
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, JwtSettings jwtSettings)
     {
         var key = Encoding.ASCII.GetBytes(jwtSettings.Secret);
+        services.AddAuthorization(options =>
+        {
+            SchoolPermissions.All.ToList().ForEach(permission =>
+            {
+                Console.WriteLine($"Permission {permission.Name} Policy {ClaimContants.Permission} {permission.Name}");
+                options.AddPolicy(permission.Name, policy => policy.RequireClaim(ClaimContants.Permission, permission.Name));
+            });
+
+            options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+        });
+
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -130,11 +140,14 @@ public static class DependencyInjection
                 {
                     if (context.Exception is SecurityTokenExpiredException)
                     {
-                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                        context.Response.ContentType = "application/json";
+                        if (!context.Response.HasStarted)
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            context.Response.ContentType = "application/json";
 
-                        var result = JsonSerializer.Serialize(ResponseWrapper.Fail("Token has expired."));
-                        return context.Response.WriteAsync(result);
+                            var result = JsonSerializer.Serialize(ResponseWrapper.Fail("Token has expired."));
+                            return context.Response.WriteAsync(result);
+                        }               
                     }
                     else
                     {
@@ -144,7 +157,7 @@ public static class DependencyInjection
                         var result = JsonSerializer.Serialize(ResponseWrapper.Fail("An unhandled error has occured."));
                         return context.Response.WriteAsync(result);
                     }
-    
+                    return Task.CompletedTask;
                 },
                 OnChallenge = context =>
                 {
@@ -168,18 +181,6 @@ public static class DependencyInjection
             };
         });
 
-        services.AddAuthorization(options =>
-        {
-            foreach (var prop in typeof(SchoolPermissions).GetNestedTypes().SelectMany(type => 
-            type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)))
-            {
-                var propertyValue = prop.GetValue(null);
-                if(propertyValue is not null)
-                {
-                    options.AddPolicy(propertyValue.ToString(), policy => policy.RequireClaim(ClaimContants.Permission, propertyValue.ToString()));
-                }
-            }
-        });
         return services;
     }
 

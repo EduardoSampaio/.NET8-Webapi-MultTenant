@@ -34,7 +34,7 @@ namespace Infraestructure.Constants
         }
     }
 
-    public class SchoolPermissions
+    public static class SchoolPermissions
     {
         private static readonly SchoolPermission[] _AllPermissions =
         {
@@ -48,13 +48,13 @@ namespace Infraestructure.Constants
             new SchoolPermission(SchoolAction.Update, SchoolFeature.Users, "Update Users","SystemAccess"),
             new SchoolPermission(SchoolAction.Delete, SchoolFeature.Users, "Delete Users","SystemAccess"),
 
+            new SchoolPermission(SchoolAction.Read, SchoolFeature.UserRoles, "Read UserRoles","SystemAccess"),
+            new SchoolPermission(SchoolAction.Update, SchoolFeature.UserRoles, "Update UserRoles","SystemAccess"),
+
             new SchoolPermission(SchoolAction.Read, SchoolFeature.Roles, "Read Roles", "SystemAccess"),
             new SchoolPermission(SchoolAction.Create, SchoolFeature.Roles, "Create Roles","SystemAccess"),
             new SchoolPermission(SchoolAction.Update, SchoolFeature.Roles, "Update Roles","SystemAccess"),
             new SchoolPermission(SchoolAction.Delete, SchoolFeature.Roles, "Delete Roles","SystemAccess"),
-
-            new SchoolPermission(SchoolAction.Read, SchoolFeature.UserRoles, "Read UserRoles","SystemAccess"),
-            new SchoolPermission(SchoolAction.Update, SchoolFeature.UserRoles, "Update UserRoles","SystemAccess"),
 
             new SchoolPermission(SchoolAction.Read, SchoolFeature.RoleClaims, "Read Role Claims/Permissions","SystemAccess"),
             new SchoolPermission(SchoolAction.Update, SchoolFeature.RoleClaims, "Update Role Claims/Permissions","SystemAccess"),
@@ -63,7 +63,6 @@ namespace Infraestructure.Constants
             new SchoolPermission(SchoolAction.Create, SchoolFeature.Schools, "Create Schools","Academics"),
             new SchoolPermission(SchoolAction.Update, SchoolFeature.Schools, "Update Schools","Academics"),
             new SchoolPermission(SchoolAction.Delete, SchoolFeature.Schools, "Delete Schools","Academics"),
-
             new SchoolPermission(SchoolAction.RefreshToken, SchoolFeature.Tokens, "Generate Refresh Token","Systemaccess", IsBasic: true),
         };
 

@@ -1,6 +1,7 @@
 ﻿using Infraestructure.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using System.Security;
 
 namespace Infraestructure.Identity.Auth;
 
@@ -18,16 +19,15 @@ public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options) : 
         return Task.FromResult<AuthorizationPolicy?>(null);
     }
 
-    public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
+    public Task<AuthorizationPolicy> GetPolicyAsync(string permission)
     {
-        if (policyName.StartsWith(ClaimContants.Permission, StringComparison.OrdinalIgnoreCase))
+        if (permission.StartsWith(ClaimContants.Permission, StringComparison.OrdinalIgnoreCase)) 
         {
-            var permission = policyName["Permission".Length..];
             var policy = new AuthorizationPolicyBuilder();
             policy.AddRequirements(new PermissionRequirement(permission));
-            return Task.FromResult(policy?.Build());
+            return Task.FromResult(policy.Build());
         }
 
-        return FallbackPolicyProvider.GetPolicyAsync(policyName);
+        return FallbackPolicyProvider.GetPolicyAsync(permission);
     }
 }

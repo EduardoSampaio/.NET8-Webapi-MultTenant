@@ -11,7 +11,7 @@ namespace Infraestructure.Identity.Auth
                                     .Claims
                                     .Where(claim => claim.Type == ClaimContants.Permission && claim.Value == requirement.Permission);
             if (permissions.Any())
-            {
+            { 
                 context.Succeed(requirement);
                 await Task.CompletedTask;
             }
