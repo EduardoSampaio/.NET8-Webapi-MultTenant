@@ -1,5 +1,6 @@
-﻿using Application;
+﻿ using Application;
 using Application.Features.Identity.Tokens;
+using Application.Features.Tenancy;
 using Application.Wrappers;
 using Finbuckle.MultiTenant;
 using Infraestructure.Constants;
@@ -44,6 +45,7 @@ public static class DependencyInjection
         services.AddTransient<ITenantDbSeeder, TenantDbSeeder>();
         services.AddTransient<ApplicationDbSeeder>();
         services.AddIdentityService(configuration);
+        services.AddTransient<ITenantService, TenantService>();
         services.AddPermissions();
         services.AddOpenApiDocumentation(configuration);
 

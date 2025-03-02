@@ -15,7 +15,7 @@ public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options) : 
 
     public Task<AuthorizationPolicy> GetFallbackPolicyAsync() 
     {
-        return Task.FromResult<AuthorizationPolicy?>(null);
+        return Task.FromResult<AuthorizationPolicy>(null);
     }
 
     public Task<AuthorizationPolicy> GetPolicyAsync(string permission)
@@ -26,7 +26,10 @@ public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options) : 
             policy.AddRequirements(new PermissionRequirement(permission));
             return Task.FromResult(policy.Build());
         }
+        else
+        {
+            return FallbackPolicyProvider.GetPolicyAsync(permission);
+        }
 
-        return FallbackPolicyProvider.GetPolicyAsync(permission);
     }
 }
