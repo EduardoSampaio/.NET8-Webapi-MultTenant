@@ -1,7 +1,6 @@
 ﻿using Infraestructure.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using System.Security;
 
 namespace Infraestructure.Identity.Auth;
 

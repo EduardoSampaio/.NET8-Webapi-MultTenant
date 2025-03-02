@@ -151,11 +151,14 @@ public static class DependencyInjection
                     }
                     else
                     {
-                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        context.Response.ContentType = "application/json";
+                        if (!context.Response.HasStarted)
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                            context.Response.ContentType = "application/json";
 
-                        var result = JsonSerializer.Serialize(ResponseWrapper.Fail("An unhandled error has occured."));
-                        return context.Response.WriteAsync(result);
+                            var result = JsonSerializer.Serialize(ResponseWrapper.Fail("An unhandled error has occured."));
+                            return context.Response.WriteAsync(result);
+                        }
                     }
                     return Task.CompletedTask;
                 },
@@ -173,10 +176,14 @@ public static class DependencyInjection
                 },
                 OnForbidden = context =>
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    context.Response.ContentType = "application/json";
-                    var result = JsonSerializer.Serialize(ResponseWrapper.Fail("You are not authorized to access this resource."));
-                    return context.Response.WriteAsync(result);
+                    if (!context.Response.HasStarted)
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonSerializer.Serialize(ResponseWrapper.Fail("You are not authorized to access this resource."));
+                        return context.Response.WriteAsync(result);
+                    }
+                    return Task.CompletedTask;
                 }
             };
         });
